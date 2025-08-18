@@ -7,7 +7,7 @@ import { DateRangePicker } from "@/components/reports/date-range-picker";
 import { ReportChart } from "@/components/reports/report-chart";
 import { WorkerPerformance } from "@/components/reports/worker-performance";
 
-export default function ReportsPage() {
+export default function Reports() {
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(new Date().setDate(new Date().getDate() - 30)),
     to: new Date(),

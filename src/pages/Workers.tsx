@@ -10,7 +10,7 @@ import { AddWorkerDialog } from "@/components/workers/add-worker-dialog";
 import { useWorkersStore, useFirmsStore } from "@/lib/store";
 import { Plus, Search } from "lucide-react";
 
-export default function WorkersPage() {
+export default function Workers() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const { workers, getWorkersByFirm } = useWorkersStore();
@@ -149,5 +149,3 @@ export default function WorkersPage() {
     </div>
   );
 }
-
-

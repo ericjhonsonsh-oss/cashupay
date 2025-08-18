@@ -16,7 +16,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation"; // To detect the current route
+import { useLocation } from "react-router-dom"; // To detect the current route
 import { useFirmsStore } from "@/lib/store";
 import { AddWorkerDialog } from "@/components/workers/add-worker-dialog";
 
@@ -25,7 +25,8 @@ export default function AddWorkerFloatingButtonWrapper() {
   const [showAddWorkerDialog, setShowAddWorkerDialog] = useState(false);
 
   // Detect the current route
-  const pathname = usePathname();
+  const location = useLocation();
+  const pathname = location.pathname;
 
   // // List of routes where the floating button should NOT appear
   // const excludedRoutes = ["/workers", "/settings", "/reports", "/workers/[id]"];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useNavigate } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { motion } from "framer-motion";
 import { MainNav } from "@/components/layout/main-nav";
@@ -60,13 +60,10 @@ import { useWorkersStore, useLogsStore, useSettingsStore } from "@/lib/store";
 import { AddWorkLogDialog } from "@/components/work-logs/add-work-log-dialog";
 import { AddPaymentDialog } from "@/components/payments/add-payment-dialog";
 import { toast } from "sonner";
-import Image from "next/image";
 
-
-
-export default function WorkerDetailsPage() {
+export default function WorkerDetails() {
   const params = useParams();
-  const router = useRouter();
+  const navigate = useNavigate();
   const workerId = params.id as string;
   
   const { workers, updateWorker } = useWorkersStore();
@@ -81,8 +78,6 @@ export default function WorkerDetailsPage() {
   const [showAddPaymentDialog, setShowAddPaymentDialog] = useState(false);
   const [paymentType, setPaymentType] = useState<'advance' | 'payout'>('advance');
   const [showClearAdvanceAlert, setShowClearAdvanceAlert] = useState(false);
-
-
 
   useEffect(() => {
     setWorker(workers.find(w => w.id === workerId));
@@ -100,18 +95,17 @@ export default function WorkerDetailsPage() {
     toast.success(`Advance cleared for ${worker.name}`);
   };
 
-
-
   const openPaymentDialog = (type: 'advance' | 'payout') => {
     setPaymentType(type);
     setShowAddPaymentDialog(true);
   };
+
   if (!worker) {
     return (
       <div className="flex min-h-screen flex-col bg-background">
         <MainNav />
         <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-          <Button variant="ghost" onClick={() => router.back()} className="text-muted-foreground hover:text-foreground transition-colors">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <div className="flex h-[400px] items-center justify-center">
@@ -122,7 +116,7 @@ export default function WorkerDetailsPage() {
                 The worker you're looking for doesn't exist or has been deleted
               </p>
               <Button 
-                onClick={() => router.push("/workers")}
+                onClick={() => navigate("/workers")}
                 className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Go to Workers
@@ -143,22 +137,15 @@ export default function WorkerDetailsPage() {
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
   
-  // // Calculate pending amount (total - advances - payouts)
-  // const payoutsMade = payments
-  //   .filter((payment) => payment.workerId === worker.id && payment.type === "payout")
-  //   .reduce((sum, payment) => sum + payment.amount, 0);
-  
-  // const pendingAmount = worker.totalAmount - worker.advanceAmount - payoutsMade;
-  
-    const advancesGiven = workerPayments
+  const advancesGiven = workerPayments
     .filter((payment) => payment.type === "advance")
     .reduce((sum, payment) => sum + payment.amount, 0);
 
-    const payoutsMade = workerPayments
-      .filter((payment) => payment.type === "payout")
-      .reduce((sum, payment) => sum + payment.amount, 0);
+  const payoutsMade = workerPayments
+    .filter((payment) => payment.type === "payout")
+    .reduce((sum, payment) => sum + payment.amount, 0);
 
-    const pendingAmount = worker.totalAmount - advancesGiven - payoutsMade;
+  const pendingAmount = worker.totalAmount - advancesGiven - payoutsMade;
 
   return (
     <div className="flex min-h-screen flex-col bg-background pb-20">
@@ -174,7 +161,7 @@ export default function WorkerDetailsPage() {
           <div className="flex items-center mb-6">
             <Button 
               variant="ghost" 
-              onClick={() => router.back()} 
+              onClick={() => navigate(-1)} 
               className="mr-4 text-muted-foreground hover:text-foreground transition-colors"
             >
               <ChevronLeft className="mr-2 h-4 w-4" /> Back
@@ -186,11 +173,10 @@ export default function WorkerDetailsPage() {
               {/* Avatar */}
               <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-border shadow-sm">
                 {worker.avatar ? (
-                  <Image 
+                  <img 
                     src={worker?.avatar} 
                     alt={worker.name} 
-                    fill 
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center text-white text-xl font-bold">
@@ -522,7 +508,7 @@ export default function WorkerDetailsPage() {
             variant="ghost" 
             size="sm" 
             className="flex flex-col items-center text-xs py-1 h-auto text-muted-foreground hover:text-primary transition-colors"
-            onClick={() => router.push("/workers")}
+            onClick={() => navigate("/workers")}
           >
             <Users className="h-5 w-5 mb-1" />
             <span>All Workers</span>
@@ -530,4 +516,5 @@ export default function WorkerDetailsPage() {
         </div>
       </div>
     </div>
-  )};
+  );
+}
